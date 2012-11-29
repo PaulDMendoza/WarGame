@@ -8,20 +8,25 @@ var Game;
             gameBoard.init();
             gameBoard.renderMapZone(zone1);
             gameBoard.renderMapZone(zone2);
+            gameBoard.addEntity(new Game.Soldier({
+                worldX: 100,
+                worldY: 200
+            }));
         };
         GameController.origin = new GameController();
         return GameController;
     })();
     Game.GameController = GameController;    
 })(Game || (Game = {}));
-
 $(function () {
     var p = new Game.GameController();
     var dist = p.start();
 });
-var zone1 = new Game.MapZone();
-zone1.worldX = 0;
-zone1.worldY = 0;
-var zone2 = new Game.MapZone();
-zone1.worldX = 512;
-zone1.worldY = 0;
+var zone1 = {
+    worldX: 0,
+    worldY: 0
+};
+var zone2 = {
+    worldX: 512,
+    worldY: 512
+};

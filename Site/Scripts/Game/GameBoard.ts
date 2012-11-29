@@ -1,37 +1,57 @@
+/// <reference path="Entity.ts" />
 /// <reference path="../tsReferences.ts" />
 
 
-// Interface
-interface IGameBoard {
-    init(): void;
-}
 
 
-
-
-// Module
 module Game {
     
-    export class MapZone {
+    export class MapZoneLayer {
+        public KineticGroup: Kinetic.Group;
+        public ZoneData: IMapZone;
+        getWorldX() {
+            return this.ZoneData.worldX;
+        }
+        getWorldY() {
+            return this.ZoneData.worldY;
+        }
+
+        getWidth() {
+            return 512;
+        }
+        
+        getHeight() {
+            return 512;
+        }
+
+    }
+
+    export interface IMapZone {
         worldX: number;
         worldY: number;
     }
-    // Class
-    export class GameBoard implements IGameBoard {
+    
+
+    export class GameBoard {
         public gameBoardID: string;
         public stage: Kinetic.Stage;
         public worldGroup: Kinetic.Group;
         public worldLayer: Kinetic.Layer;
-
         private self: GameBoard;
-        constructor (gameBoardID: string) {
-            this.gameBoardID = gameBoardID;              
+
+        public entities: Entity[];
+        public mapZoneLayers: MapZoneLayer[];
+
+        constructor (gameBoardID?: string) {
+            this.gameBoardID = gameBoardID;  
+            this.entities = [];
+            this.mapZoneLayers = [];
         }
         
         init() {            
             var $gameBoard = $('#' + this.gameBoardID);
             var width = $gameBoard.parent().width();
-            var height = width * 0.5;
+            var height = width;
 
             this.stage = new Kinetic.Stage({
                 container: this.gameBoardID,
@@ -46,46 +66,82 @@ module Game {
                       
         }
 
-        renderMapZone(mapZoneData : Game.MapZone) {
+        renderMapZone(mapZoneData : IMapZone) {
+            var mapZoneLayer = new MapZoneLayer();                     
+            mapZoneLayer.KineticGroup = new Kinetic.Group();
+            mapZoneLayer.ZoneData = mapZoneData;
+
             var relativeX = mapZoneData.worldX;
             var relativeY = mapZoneData.worldY;
                         
-            var zoneGroup = new Kinetic.Group();
-
             var box = new Kinetic.Rect({
                         x: relativeX,
                         y: relativeY,
-                        width: 512,
-                        height: 512,
+                        width: mapZoneLayer.getWidth(),
+                        height: mapZoneLayer.getHeight(),
                         name: 'background',
                         fill: 'green'
                     });
-            zoneGroup.add(box);
-            
-            var colors = ['red', 'orange', 'yellow'];
+            mapZoneLayer.KineticGroup.add(box);                        
+            this.worldGroup.add(mapZoneLayer.KineticGroup);
+            this.worldLayer.draw();            
+            this.mapZoneLayers.push(mapZoneLayer);
+        }
 
-            for (var n = 0; n < 3; n++) {
-                // anonymous function to induce scope
-                (function () {
-                    var i = n;
-                    var box = new Kinetic.Rect({
-                        x: relativeX + (i * 30),
-                        y: relativeY + (i * 18),
-                        width: 100,
-                        height: 50,
-                        name: colors[i],
-                        fill: colors[i],
-                        stroke: 'black',
-                        strokeWidth: 4
-                    });
+        getLayerUnderPoint(x : number , y: number) : MapZoneLayer {
+            var len = this.mapZoneLayers.length;
+            for (var i = 0; i < len; i++) {
+                var mapZoneLayer = this.mapZoneLayers[i];
+                var zoneX = mapZoneLayer.getWorldX();
+                var zoneY = mapZoneLayer.getWorldY();
+                var zoneBoundryX = zoneX + mapZoneLayer.getWidth();
+                var zoneBoundryY = zoneY + mapZoneLayer.getHeight();
+                if (zoneX <= x && x <= zoneBoundryX) {
+                    if (zoneY <= x && x <= zoneBoundryY) {
+                        return mapZoneLayer;
+                    }
+                }
+            }
+            throw new Error("Unable to find a zone under point. There must have been a data loading error in the GameBoard.");
+        }
 
-                    zoneGroup.add(box);
-                })();
-            }            
+        addEntity(entity : Entity) {
+            this.entities.push(entity);
+            entity.setParentLayer(this.worldLayer);
+
+            var kineticGroup = entity.getKineticGroup();            
+            if (entity.canMove()) {
+                this.worldGroup.add(kineticGroup);
+            } else {
+                var group = this.getLayerUnderPoint(entity._worldX, entity._worldY).KineticGroup;
+                group.add(entity.getKineticGroup());
+            }
                         
-            this.worldGroup.add(zoneGroup);
-            this.worldLayer.draw();
+            
         }
     }    
 }
+
+
+QUnit.module("GameBoard");
+QUnit.test("getLayerUnderPoint", function () {
+    
+    var gameBoard = new Game.GameBoard('testGameBoard');
+    gameBoard.init();
+    var zone1 = <Game.IMapZone>{
+        worldX: 0,
+        worldY: 0
+    };
+
+    var zone2 = <Game.IMapZone>{
+        worldX: 512,
+        worldY: 512
+    };
+    
+    gameBoard.renderMapZone(zone1);
+    gameBoard.renderMapZone(zone2);
+    var layer = gameBoard.getLayerUnderPoint(600, 256);
+    QUnit.ok(layer.ZoneData == zone2, "checking zone is valid");
+    
+});
 

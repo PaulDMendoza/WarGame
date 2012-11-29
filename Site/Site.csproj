@@ -171,6 +171,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\qunit.css" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -236,6 +237,9 @@
     <Content Include="Scripts\Game\Entity.js">
       <DependentUpon>Entity.ts</DependentUpon>
     </Content>
+    <Content Include="Scripts\Game\Entity.min.js">
+      <DependentUpon>Entity.ts</DependentUpon>
+    </Content>
     <Content Include="Scripts\Game\GameBoard.js">
       <DependentUpon>GameBoard.ts</DependentUpon>
     </Content>
@@ -266,6 +270,7 @@
     <Content Include="Scripts\linq.js" />
     <Content Include="Scripts\modernizr-2.5.3.js" />
     <TypeScriptCompile Include="Scripts\tsReferences.ts" />
+    <Content Include="Scripts\qunit.js" />
     <Content Include="Scripts\tsReferences.js">
       <DependentUpon>tsReferences.ts</DependentUpon>
     </Content>
@@ -276,8 +281,12 @@
     <Content Include="Scripts\TypeScriptDefinitions\kinetic.d.js">
       <DependentUpon>kinetic.d.ts</DependentUpon>
     </Content>
+    <Content Include="Scripts\TypeScriptDefinitions\kinetic.d.min.js">
+      <DependentUpon>kinetic.d.ts</DependentUpon>
+    </Content>
     <Content Include="Scripts\TypeScriptDefinitions\knockout-2.2.d.ts" />
     <Content Include="Scripts\TypeScriptDefinitions\linq-2.2.d.ts" />
+    <Content Include="Scripts\TypeScriptDefinitions\qunit-1.10.d.ts" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

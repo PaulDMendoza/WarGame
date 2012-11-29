@@ -1,25 +1,78 @@
-// Interface
-interface IPoint {
-    getDist(): number;
-}
+/// <reference path="../tsReferences.ts" />
 
-// Module
-module Shapes {
+module Game {
+    export class Entity {
 
-    // Class
-    export class Point implements IPoint {
-        // Constructor
-        constructor (public x: number, public y: number) { }
+        _worldX: number;
+        _worldY: number;       
+        _parentLayer: Kinetic.Layer;
 
-        // Instance member
-        getDist() { return Math.sqrt(this.x * this.x + this.y * this.y); }
+        constructor (config : IEntityConfiguration) {
+            this._worldX = config.worldX;
+            this._worldY = config.worldY;
+        }
 
-        // Static member
-        static origin = new Point(0, 0);
+        canMove() {
+            return false;
+        }
+        
+        getKineticGroup() {
+            var group = new Kinetic.Group();
+            return group;
+        }
+
+        setParentLayer(parentLayer: Kinetic.Layer) {
+            this._parentLayer = parentLayer;
+        }
+
+        draw() {
+            if(!this._parentLayer)
+                throw new Error("_parentLayer is null. Must call setParentLayer first.");
+            this._parentLayer.draw();
+        }
     }
 
-}
+    export interface IEntityConfiguration {
+        worldX: number;
+        worldY: number;        
+    }
 
-// Local variables
-var p: IPoint = new Shapes.Point(3, 4);
-var dist = p.getDist();
+    export class Soldier extends Entity {               
+        
+        
+
+        constructor (config : IEntityConfiguration) {
+            super(config); 
+        }
+
+        canMove() {
+            return true;
+        }
+        
+        getKineticGroup() {
+            var self = this;
+            var group = super.getKineticGroup();
+            var imageObj = new Image();
+            imageObj.onload = function () {
+                var image = new Kinetic.Image({
+                    image: imageObj,
+                    width: 48,
+                    height: 48,
+                    x: self._worldX,
+                    y: self._worldY
+                });
+                group.add(image);
+                self.draw();
+                console.log("Drawing soldier");
+            };
+            imageObj.src = "http://www.militaryimages.net/forums/images/smilies/desert_soldier.gif";
+
+            return group;
+        }
+        
+        moveToClick() {
+
+        }
+                                                
+    }        
+}

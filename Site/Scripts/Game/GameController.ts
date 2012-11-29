@@ -1,3 +1,4 @@
+/// <reference path="Entity.ts" />
 /// <reference path="../tsReferences.ts" />
 /// <reference path="GameBoard.ts" />
 
@@ -21,6 +22,7 @@ module Game {
             gameBoard.init();
             gameBoard.renderMapZone(zone1);
             gameBoard.renderMapZone(zone2);
+            gameBoard.addEntity(new Game.Soldier({ worldX: 100, worldY: 200 }));
         }
 
         // Static member
@@ -33,11 +35,13 @@ $(function () {
     var dist = p.start();
 });
 
-var zone1 = new Game.MapZone();
-zone1.worldX = 0;
-zone1.worldY = 0;
 
-var zone2 = new Game.MapZone();
-zone1.worldX = 512;
-zone1.worldY = 0;
+var zone1 = <Game.IMapZone>{
+        worldX: 0,
+        worldY: 0
+    };
 
+var zone2 = <Game.IMapZone>{
+    worldX: 512,
+    worldY: 512
+};
