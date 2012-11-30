@@ -7,7 +7,7 @@
 module Game {
     
     export class MapZoneLayer {
-        public KineticGroup: Kinetic.Group;
+        public KineticLayer: Kinetic.Layer;
         public ZoneData: IMapZone;
         getWorldX() {
             return this.ZoneData.worldX;
@@ -34,18 +34,19 @@ module Game {
 
     export class GameBoard {
         public gameBoardID: string;
-        public stage: Kinetic.Stage;
-        public worldGroup: Kinetic.Group;
-        public worldLayer: Kinetic.Layer;
+        public stage: Kinetic.Stage; 
+               
+        public movableEntitiesLayer: Kinetic.Layer;
         private self: GameBoard;
 
         public entities: Entity[];
         public mapZoneLayers: MapZoneLayer[];
+        
 
         constructor (gameBoardID?: string) {
             this.gameBoardID = gameBoardID;  
             this.entities = [];
-            this.mapZoneLayers = [];
+            this.mapZoneLayers = [];            
         }
         
         init() {            
@@ -56,19 +57,17 @@ module Game {
             this.stage = new Kinetic.Stage({
                 container: this.gameBoardID,
                 width: width,
-                height: height
-            });  
-            this.worldGroup = new Kinetic.Group();
-            this.worldGroup.setDraggable(true);
-            this.worldLayer = new Kinetic.Layer();
-            this.worldLayer.add(this.worldGroup);
-            this.stage.add(this.worldLayer);
-                      
+                height: height,
+                draggable: true
+            });
+            this.movableEntitiesLayer = new Kinetic.Layer();
+            this.stage.add(this.movableEntitiesLayer);
         }
 
         renderMapZone(mapZoneData : IMapZone) {
             var mapZoneLayer = new MapZoneLayer();                     
-            mapZoneLayer.KineticGroup = new Kinetic.Group();
+            mapZoneLayer.KineticLayer = new Kinetic.Layer();
+            
             mapZoneLayer.ZoneData = mapZoneData;
 
             var relativeX = mapZoneData.worldX;
@@ -82,10 +81,10 @@ module Game {
                         name: 'background',
                         fill: 'green'
                     });
-            mapZoneLayer.KineticGroup.add(box);                        
-            this.worldGroup.add(mapZoneLayer.KineticGroup);
-            this.worldLayer.draw();            
+            mapZoneLayer.KineticLayer.add(box);                        
+            this.stage.add(mapZoneLayer.KineticLayer);            
             this.mapZoneLayers.push(mapZoneLayer);
+            mapZoneLayer.KineticLayer.moveToBottom();
         }
 
         getLayerUnderPoint(x : number , y: number) : MapZoneLayer {
@@ -107,17 +106,19 @@ module Game {
 
         addEntity(entity : Entity) {
             this.entities.push(entity);
-            entity.setParentLayer(this.worldLayer);
-
-            var kineticGroup = entity.getKineticGroup();            
-            if (entity.canMove()) {
-                this.worldGroup.add(kineticGroup);
-            } else {
-                var group = this.getLayerUnderPoint(entity._worldX, entity._worldY).KineticGroup;
-                group.add(entity.getKineticGroup());
-            }
-                        
             
+            var kineticGroup;
+                        
+            if (entity.canMove()) {                
+                entity.setParentLayer(this.movableEntitiesLayer);
+                kineticGroup = entity.getKineticGroup();
+                this.movableEntitiesLayer.add(kineticGroup);
+            } else {
+                throw new Error("Not implemented, still need to set the parent layer");
+                
+                var layerUnderPoint = this.getLayerUnderPoint(entity._worldX, entity._worldY).KineticLayer;
+                layerUnderPoint.add(kineticGroup);
+            }
         }
     }    
 }

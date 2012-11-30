@@ -65,7 +65,7 @@ module Kinetic {
         moveToTop(): void;
         moveUp(): void;
         off(typesStr: string): void;
-        on(typesStr: string, handler: () =>{ }): void;
+        on(typesStr: string, handler: (evt?: any) => void): void;
         rotate(theta: number): void;
         rotateDeg(deg: number): void;
 
@@ -89,7 +89,21 @@ module Kinetic {
         show(): void;
         simulate(eventType: string): void;
         toDataURL(config: any): void;
-        transitionTo(config: any): void;
+        transitionTo(config: transitionTo_Config): void;
+    }
+
+    interface transitionTo_Config {
+        duration: number;
+        x?: number;
+        y?: number;
+        rotation?: number;
+        opacity?: number;
+        strokeWidth?: number;
+        radius?: number;
+        scale?: Vector2d;
+        offset?: Vector2d;        
+        easing?: string;
+        callback?: () => { };
     }
 
     class Container extends Node {

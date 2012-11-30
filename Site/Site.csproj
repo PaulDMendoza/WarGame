@@ -234,6 +234,12 @@
     <TypeScriptCompile Include="Scripts\Game\GameController.ts" />
     <TypeScriptCompile Include="Scripts\Game\GameBoard.ts" />
     <TypeScriptCompile Include="Scripts\Game\Entity.ts" />
+    <Content Include="Images\GameAssets\BulletImpact-1.png" />
+    <Content Include="Images\GameAssets\BulletImpact-2.png" />
+    <Content Include="Images\GameAssets\House-1.png" />
+    <Content Include="Images\GameAssets\MachineGunNest-1.png" />
+    <Content Include="Images\GameAssets\Soldiers\Assault.png" />
+    <Content Include="Images\GameAssets\Soldiers\Sniper.png" />
     <Content Include="Scripts\Game\Entity.js">
       <DependentUpon>Entity.ts</DependentUpon>
     </Content>

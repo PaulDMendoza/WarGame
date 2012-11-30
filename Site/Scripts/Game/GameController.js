@@ -8,7 +8,15 @@ var Game;
             gameBoard.init();
             gameBoard.renderMapZone(zone1);
             gameBoard.renderMapZone(zone2);
-            gameBoard.addEntity(new Game.Soldier({
+            gameBoard.renderMapZone({
+                worldX: 0,
+                worldY: 512
+            });
+            gameBoard.renderMapZone({
+                worldX: 512,
+                worldY: 0
+            });
+            gameBoard.addEntity(new Game.Sniper({
                 worldX: 100,
                 worldY: 200
             }));

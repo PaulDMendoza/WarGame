@@ -30,17 +30,15 @@ var Game;
             this.stage = new Kinetic.Stage({
                 container: this.gameBoardID,
                 width: width,
-                height: height
+                height: height,
+                draggable: true
             });
-            this.worldGroup = new Kinetic.Group();
-            this.worldGroup.setDraggable(true);
-            this.worldLayer = new Kinetic.Layer();
-            this.worldLayer.add(this.worldGroup);
-            this.stage.add(this.worldLayer);
+            this.movableEntitiesLayer = new Kinetic.Layer();
+            this.stage.add(this.movableEntitiesLayer);
         };
         GameBoard.prototype.renderMapZone = function (mapZoneData) {
             var mapZoneLayer = new MapZoneLayer();
-            mapZoneLayer.KineticGroup = new Kinetic.Group();
+            mapZoneLayer.KineticLayer = new Kinetic.Layer();
             mapZoneLayer.ZoneData = mapZoneData;
             var relativeX = mapZoneData.worldX;
             var relativeY = mapZoneData.worldY;
@@ -52,10 +50,10 @@ var Game;
                 name: 'background',
                 fill: 'green'
             });
-            mapZoneLayer.KineticGroup.add(box);
-            this.worldGroup.add(mapZoneLayer.KineticGroup);
-            this.worldLayer.draw();
+            mapZoneLayer.KineticLayer.add(box);
+            this.stage.add(mapZoneLayer.KineticLayer);
             this.mapZoneLayers.push(mapZoneLayer);
+            mapZoneLayer.KineticLayer.moveToBottom();
         };
         GameBoard.prototype.getLayerUnderPoint = function (x, y) {
             var len = this.mapZoneLayers.length;
@@ -75,13 +73,15 @@ var Game;
         };
         GameBoard.prototype.addEntity = function (entity) {
             this.entities.push(entity);
-            entity.setParentLayer(this.worldLayer);
-            var kineticGroup = entity.getKineticGroup();
+            var kineticGroup;
             if(entity.canMove()) {
-                this.worldGroup.add(kineticGroup);
+                entity.setParentLayer(this.movableEntitiesLayer);
+                kineticGroup = entity.getKineticGroup();
+                this.movableEntitiesLayer.add(kineticGroup);
             } else {
-                var group = this.getLayerUnderPoint(entity._worldX, entity._worldY).KineticGroup;
-                group.add(entity.getKineticGroup());
+                throw new Error("Not implemented, still need to set the parent layer");
+                var layerUnderPoint = this.getLayerUnderPoint(entity._worldX, entity._worldY).KineticLayer;
+                layerUnderPoint.add(kineticGroup);
             }
         };
         return GameBoard;
