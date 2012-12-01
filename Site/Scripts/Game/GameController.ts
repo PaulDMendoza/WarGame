@@ -10,6 +10,16 @@ interface IGameController {
 // Module
 module Game {
 
+    
+    export class Utilities {
+        public static distanceBetweenPoints(x1: number, y1: number, x2: number, y2: number): number {
+            var distanceX = Math.abs(x1 - x2);
+            var distanceY = Math.abs(y1 - y2);
+            var tangent = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
+            return tangent;
+        }
+    }    
+
     // Class
     export class GameController implements IGameController {
         // Constructor
@@ -25,6 +35,9 @@ module Game {
             gameBoard.renderMapZone({worldX: 0, worldY: 512});
             gameBoard.renderMapZone({worldX: 512, worldY: 0});
             gameBoard.addEntity(new Game.Sniper({ worldX: 100, worldY: 200 }));
+            gameBoard.addEntity(new Game.Sniper({ worldX: 160, worldY: 240 }));
+            gameBoard.addEntity(new Game.Sniper({ worldX: 55, worldY: 80 }));
+            gameBoard.addEntity(new Game.Turret({ worldX: 450, worldY: 300 }));
         }
 
         // Static member

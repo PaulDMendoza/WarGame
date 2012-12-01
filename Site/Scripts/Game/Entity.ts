@@ -1,16 +1,18 @@
+/// <reference path="GameController.ts" />
+/// <reference path="GameBoard.ts" />
+/// <reference path="Entities/Turret.ts" />
+/// <reference path="Entities/Sniper.ts" />
 /// <reference path="../tsReferences.ts" />
 
 module Game {
     
-    
-
     export class Entity {
 
         _worldX: number;
         _worldY: number;       
         _parentLayer: Kinetic.Layer;
         _group: Kinetic.Group;
-        
+        _gameBoard: GameBoard;
 
         constructor (config : IEntityConfiguration) {
             
@@ -18,7 +20,13 @@ module Game {
             this._worldY = config.worldY;
 
         }
+        
+        setGameBoard(gameBoard : GameBoard) {
+            this._gameBoard = gameBoard;
+        }
 
+        // Indicates whether this object can move locations. Moveable entites go on a different layer 
+        // than non-moving entities. This improves performance.
         canMove() {
             return false;
         }
@@ -66,6 +74,54 @@ module Game {
                 this.draw();
             }            
         }
+
+        addImage(options : IEntity_AddImage_Options) : IEntity_AddImage_Result {
+            if(!this._group) 
+                throw new Error("_group must be defined before calling addImage.");
+            var self = this;
+            
+            var returnResult = <IEntity_AddImage_Result>{};
+
+            returnResult.imageObj = new Image();
+
+            returnResult.KineticImage = new Kinetic.Image({
+                    image: returnResult.imageObj,
+                    width: options.width,
+                    height: options.height                    
+                });
+
+                returnResult.imageObj.onload = function () {
+                self._group.add(returnResult.KineticImage);
+                self.draw();
+                if (options.onLoadPostDraw) {
+                    options.onLoadPostDraw();
+                }
+            };
+            returnResult.imageObj.src = options.url;
+            
+            return returnResult;
+        }
+
+        // Gets called periodically. It returns a value for when to call this function next.
+        tick() {
+            this._worldX = this._group.getX();
+            this._worldY = this._group.getY();
+        }
+
+        findEntities(withinPixelRange: number) : Entity[] {
+            var entitiesWithinRange : Entity[] = [] ;
+            var entitiesLen = this._gameBoard.entities.length;
+            for (var i = 0; i < entitiesLen; i++) {
+                var entity = this._gameBoard.entities[i];
+                if(entity === this)
+                    continue;
+
+                var distance = Game.Utilities.distanceBetweenPoints(this._worldX, this._worldY, entity._worldX, entity._worldY);
+                if(distance < withinPixelRange)
+                    entitiesWithinRange.push(entity);
+            }
+            return entitiesWithinRange;
+        }
     }
     
     export interface IEntityConfiguration {
@@ -77,42 +133,18 @@ module Game {
         // Number of pixels to move the entity over the specified distance.
         pixelsPerSecond?: number;
     }
+
+    export interface IEntity_AddImage_Options {
+        width: number;
+        height: number;
+        url: string;
+        onLoadPostDraw?: ()=>void;
+    }
+
+    export interface IEntity_AddImage_Result {
+        imageObj: HTMLImageElement;
+        KineticImage: Kinetic.Image;
+    }
     
-    export class Sniper extends Entity {               
-        
-        constructor (config : IEntityConfiguration) {
-            super(config); 
-        }
-
-        canMove() {
-            return true;
-        }
-        
-        getKineticGroup() {
-            var self = this;
-            var group = super.getKineticGroup();
-            
-            var imageObj = new Image();
-            imageObj.onload = function () {
-                var image = new Kinetic.Image({
-                    image: imageObj,
-                    width: 48,
-                    height: 48                    
-                });
-
-                image.on('click', function () {
-                    self.move(self._group.getX() + 50, self._group.getY() + 50, {
-                        pixelsPerSecond: 10
-                    });
-                });
-
-                group.add(image);
-                self.draw();
-                console.log("Drawing soldier");
-            };
-            imageObj.src = "/Images/GameAssets/Soldiers/Sniper.png";
-            
-            return group;
-        }                                       
-    }        
+                    
 }

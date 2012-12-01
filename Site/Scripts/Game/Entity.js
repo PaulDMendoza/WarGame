@@ -1,8 +1,3 @@
-var __extends = this.__extends || function (d, b) {
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
 var Game;
 (function (Game) {
     var Entity = (function () {
@@ -10,6 +5,9 @@ var Game;
             this._worldX = config.worldX;
             this._worldY = config.worldY;
         }
+        Entity.prototype.setGameBoard = function (gameBoard) {
+            this._gameBoard = gameBoard;
+        };
         Entity.prototype.canMove = function () {
             return false;
         };
@@ -48,40 +46,49 @@ var Game;
                 this.draw();
             }
         };
+        Entity.prototype.addImage = function (options) {
+            if(!this._group) {
+                throw new Error("_group must be defined before calling addImage.");
+            }
+            var self = this;
+            var returnResult = {
+            };
+            returnResult.imageObj = new Image();
+            returnResult.KineticImage = new Kinetic.Image({
+                image: returnResult.imageObj,
+                width: options.width,
+                height: options.height
+            });
+            returnResult.imageObj.onload = function () {
+                self._group.add(returnResult.KineticImage);
+                self.draw();
+                if(options.onLoadPostDraw) {
+                    options.onLoadPostDraw();
+                }
+            };
+            returnResult.imageObj.src = options.url;
+            return returnResult;
+        };
+        Entity.prototype.tick = function () {
+            this._worldX = this._group.getX();
+            this._worldY = this._group.getY();
+        };
+        Entity.prototype.findEntities = function (withinPixelRange) {
+            var entitiesWithinRange = [];
+            var entitiesLen = this._gameBoard.entities.length;
+            for(var i = 0; i < entitiesLen; i++) {
+                var entity = this._gameBoard.entities[i];
+                if(entity === this) {
+                    continue;
+                }
+                var distance = Game.Utilities.distanceBetweenPoints(this._worldX, this._worldY, entity._worldX, entity._worldY);
+                if(distance < withinPixelRange) {
+                    entitiesWithinRange.push(entity);
+                }
+            }
+            return entitiesWithinRange;
+        };
         return Entity;
     })();
     Game.Entity = Entity;    
-    var Sniper = (function (_super) {
-        __extends(Sniper, _super);
-        function Sniper(config) {
-                _super.call(this, config);
-        }
-        Sniper.prototype.canMove = function () {
-            return true;
-        };
-        Sniper.prototype.getKineticGroup = function () {
-            var self = this;
-            var group = _super.prototype.getKineticGroup.call(this);
-            var imageObj = new Image();
-            imageObj.onload = function () {
-                var image = new Kinetic.Image({
-                    image: imageObj,
-                    width: 48,
-                    height: 48
-                });
-                image.on('click', function () {
-                    self.move(self._group.getX() + 50, self._group.getY() + 50, {
-                        pixelsPerSecond: 10
-                    });
-                });
-                group.add(image);
-                self.draw();
-                console.log("Drawing soldier");
-            };
-            imageObj.src = "/Images/GameAssets/Soldiers/Sniper.png";
-            return group;
-        };
-        return Sniper;
-    })(Entity);
-    Game.Sniper = Sniper;    
 })(Game || (Game = {}));

@@ -18,7 +18,7 @@ namespace Site
                         "~/Scripts/linq.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/gamecontroller")
-                .IncludeDirectory("~/Scripts/Game", "*.js")
+                .IncludeDirectory("~/Scripts/Game", "*.js", true)
                 .Include("~/Scripts/kinetic.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(

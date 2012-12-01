@@ -239,7 +239,22 @@
     <Content Include="Images\GameAssets\House-1.png" />
     <Content Include="Images\GameAssets\MachineGunNest-1.png" />
     <Content Include="Images\GameAssets\Soldiers\Assault.png" />
+    <Content Include="Images\GameAssets\Soldiers\MachineGunner.png" />
     <Content Include="Images\GameAssets\Soldiers\Sniper.png" />
+    <TypeScriptCompile Include="Scripts\Game\Entities\Turret.ts" />
+    <TypeScriptCompile Include="Scripts\Game\Entities\Sniper.ts" />
+    <Content Include="Scripts\Game\Entities\Sniper.js">
+      <DependentUpon>Sniper.ts</DependentUpon>
+    </Content>
+    <Content Include="Scripts\Game\Entities\Sniper.min.js">
+      <DependentUpon>Sniper.ts</DependentUpon>
+    </Content>
+    <Content Include="Scripts\Game\Entities\Turret.js">
+      <DependentUpon>Turret.ts</DependentUpon>
+    </Content>
+    <Content Include="Scripts\Game\Entities\Turret.min.js">
+      <DependentUpon>Turret.ts</DependentUpon>
+    </Content>
     <Content Include="Scripts\Game\Entity.js">
       <DependentUpon>Entity.ts</DependentUpon>
     </Content>

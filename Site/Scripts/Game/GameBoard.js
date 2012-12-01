@@ -24,6 +24,7 @@ var Game;
             this.mapZoneLayers = [];
         }
         GameBoard.prototype.init = function () {
+            var self = this;
             var $gameBoard = $('#' + this.gameBoardID);
             var width = $gameBoard.parent().width();
             var height = width;
@@ -35,6 +36,16 @@ var Game;
             });
             this.movableEntitiesLayer = new Kinetic.Layer();
             this.stage.add(this.movableEntitiesLayer);
+            setInterval(function () {
+                self.gameLoop();
+            }, 250);
+        };
+        GameBoard.prototype.gameLoop = function () {
+            var entitiesLen = this.entities.length;
+            for(var i = 0; i < entitiesLen; i++) {
+                var entity = this.entities[i];
+                entity.tick();
+            }
         };
         GameBoard.prototype.renderMapZone = function (mapZoneData) {
             var mapZoneLayer = new MapZoneLayer();
@@ -73,14 +84,16 @@ var Game;
         };
         GameBoard.prototype.addEntity = function (entity) {
             this.entities.push(entity);
+            entity.setGameBoard(this);
             var kineticGroup;
             if(entity.canMove()) {
                 entity.setParentLayer(this.movableEntitiesLayer);
                 kineticGroup = entity.getKineticGroup();
                 this.movableEntitiesLayer.add(kineticGroup);
             } else {
-                throw new Error("Not implemented, still need to set the parent layer");
                 var layerUnderPoint = this.getLayerUnderPoint(entity._worldX, entity._worldY).KineticLayer;
+                entity.setParentLayer(layerUnderPoint);
+                kineticGroup = entity.getKineticGroup();
                 layerUnderPoint.add(kineticGroup);
             }
         };
@@ -88,20 +101,3 @@ var Game;
     })();
     Game.GameBoard = GameBoard;    
 })(Game || (Game = {}));
-QUnit.module("GameBoard");
-QUnit.test("getLayerUnderPoint", function () {
-    var gameBoard = new Game.GameBoard('testGameBoard');
-    gameBoard.init();
-    var zone1 = {
-        worldX: 0,
-        worldY: 0
-    };
-    var zone2 = {
-        worldX: 512,
-        worldY: 512
-    };
-    gameBoard.renderMapZone(zone1);
-    gameBoard.renderMapZone(zone2);
-    var layer = gameBoard.getLayerUnderPoint(600, 256);
-    QUnit.ok(layer.ZoneData == zone2, "checking zone is valid");
-});
