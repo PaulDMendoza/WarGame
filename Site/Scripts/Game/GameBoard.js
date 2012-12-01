@@ -59,7 +59,7 @@ var Game;
                 width: mapZoneLayer.getWidth(),
                 height: mapZoneLayer.getHeight(),
                 name: 'background',
-                fill: 'green'
+                fill: 'white'
             });
             mapZoneLayer.KineticLayer.add(box);
             this.stage.add(mapZoneLayer.KineticLayer);
@@ -87,14 +87,14 @@ var Game;
             entity.setGameBoard(this);
             var kineticGroup;
             if(entity.canMove()) {
-                entity.setParentLayer(this.movableEntitiesLayer);
+                entity.setParentLayer(this.movableEntitiesLayer, 0, 0);
                 kineticGroup = entity.getKineticGroup();
                 this.movableEntitiesLayer.add(kineticGroup);
             } else {
-                var layerUnderPoint = this.getLayerUnderPoint(entity._worldX, entity._worldY).KineticLayer;
-                entity.setParentLayer(layerUnderPoint);
+                var layerUnderPoint = this.getLayerUnderPoint(entity._x, entity._y);
+                entity.setParentLayer(layerUnderPoint.KineticLayer, layerUnderPoint.getWorldX(), layerUnderPoint.getWorldY());
                 kineticGroup = entity.getKineticGroup();
-                layerUnderPoint.add(kineticGroup);
+                layerUnderPoint.KineticLayer.add(kineticGroup);
             }
         };
         return GameBoard;

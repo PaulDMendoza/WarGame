@@ -8,6 +8,9 @@ var Game;
             var tangent = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
             return tangent;
         }
+        Utilities.radiansBetweenPoints = function radiansBetweenPoints(x1, y1, x2, y2) {
+            return Math.atan2(y2 - y1, x2 - x1);
+        }
         return Utilities;
     })();
     Game.Utilities = Utilities;    

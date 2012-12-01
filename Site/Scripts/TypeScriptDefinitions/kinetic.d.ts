@@ -103,7 +103,7 @@ module Kinetic {
         scale?: Vector2d;
         offset?: Vector2d;        
         easing?: string;
-        callback?: () => { };
+        callback?: () => void;
     }
 
     class Container extends Node {
@@ -357,8 +357,16 @@ module Kinetic {
     }
 
     class Animation extends Container {
+        constructor (callback: (frame: IFrame) =>void, node?: Node);
         start();
         stop();
+    }
+
+    interface IFrame {
+        time: number;
+        timeDiff: number;
+        lastTime: Date;
+        frameRate: number;
     }
 
     interface StageConfig extends ObjectOptionsConfig {
@@ -386,7 +394,7 @@ module Kinetic {
         image: any;
         width?: number;
         height?: number;
-        crop?: any;
+        crop?: any;        
     }
 
     interface SpriteConfig extends DrawOptionsConfig, ObjectOptionsConfig {

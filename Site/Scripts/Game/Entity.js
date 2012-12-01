@@ -2,8 +2,8 @@ var Game;
 (function (Game) {
     var Entity = (function () {
         function Entity(config) {
-            this._worldX = config.worldX;
-            this._worldY = config.worldY;
+            this._x = config.worldX;
+            this._y = config.worldY;
         }
         Entity.prototype.setGameBoard = function (gameBoard) {
             this._gameBoard = gameBoard;
@@ -11,15 +11,23 @@ var Game;
         Entity.prototype.canMove = function () {
             return false;
         };
+        Entity.prototype.getWorldX = function () {
+            return this._group.getX();
+        };
+        Entity.prototype.getWorldY = function () {
+            return this._group.getY();
+        };
         Entity.prototype.getKineticGroup = function () {
             this._group = new Kinetic.Group({
-                x: this._worldX,
-                y: this._worldY
+                x: this._x,
+                y: this._y
             });
             return this._group;
         };
-        Entity.prototype.setParentLayer = function (parentLayer) {
+        Entity.prototype.setParentLayer = function (parentLayer, parentLayerOffsetX, parentLayerOffsetY) {
             this._parentLayer = parentLayer;
+            this._parentLayerOffsetX = parentLayerOffsetX;
+            this._parentLayerOffsetY = parentLayerOffsetY;
         };
         Entity.prototype.draw = function () {
             if(!this._parentLayer) {
@@ -54,11 +62,24 @@ var Game;
             var returnResult = {
             };
             returnResult.imageObj = new Image();
+            var x = options.x;
+            if(x === undefined) {
+                x = (options.width / 2) * -1;
+            }
+            var y = options.y;
+            if(y === undefined) {
+                y = (options.height / 2) * -1;
+            }
             returnResult.KineticImage = new Kinetic.Image({
+                x: x,
+                y: y,
                 image: returnResult.imageObj,
                 width: options.width,
                 height: options.height
             });
+            if(options.offset) {
+                returnResult.KineticImage.setOffset(options.offset[0], options.offset[1]);
+            }
             returnResult.imageObj.onload = function () {
                 self._group.add(returnResult.KineticImage);
                 self.draw();
@@ -70,8 +91,8 @@ var Game;
             return returnResult;
         };
         Entity.prototype.tick = function () {
-            this._worldX = this._group.getX();
-            this._worldY = this._group.getY();
+            this._x = this._group.getX();
+            this._y = this._group.getY();
         };
         Entity.prototype.findEntities = function (withinPixelRange) {
             var entitiesWithinRange = [];
@@ -81,9 +102,14 @@ var Game;
                 if(entity === this) {
                     continue;
                 }
-                var distance = Game.Utilities.distanceBetweenPoints(this._worldX, this._worldY, entity._worldX, entity._worldY);
+                var distance = Game.Utilities.distanceBetweenPoints(this.getWorldX(), this.getWorldY(), entity.getWorldX(), entity.getWorldY());
+                var radiansToEntity = Game.Utilities.radiansBetweenPoints(entity.getWorldX(), entity.getWorldY(), this.getWorldX(), this.getWorldY());
                 if(distance < withinPixelRange) {
-                    entitiesWithinRange.push(entity);
+                    entitiesWithinRange.push({
+                        distance: distance,
+                        entity: entity,
+                        radiansToEntity: radiansToEntity
+                    });
                 }
             }
             return entitiesWithinRange;
