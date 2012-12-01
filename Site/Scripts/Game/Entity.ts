@@ -57,8 +57,8 @@ module Game {
                 var duration = totalDistanceToTravel / options.pixelsPerSecond;
 
                 this._group.transitionTo({
-                    x: distanceX,
-                    y: distanceY,
+                    x: x,
+                    y: y,
                     duration: duration
                 });
             } else {

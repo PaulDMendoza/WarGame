@@ -39,8 +39,8 @@ var Game;
                 var totalDistanceToTravel = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
                 var duration = totalDistanceToTravel / options.pixelsPerSecond;
                 this._group.transitionTo({
-                    x: distanceX,
-                    y: distanceY,
+                    x: x,
+                    y: y,
                     duration: duration
                 });
             } else {
