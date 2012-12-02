@@ -43,8 +43,12 @@ var Game;
         GameBoard.prototype.gameLoop = function () {
             var entitiesLen = this.entities.length;
             for(var i = 0; i < entitiesLen; i++) {
-                var entity = this.entities[i];
-                entity.tick();
+                try  {
+                    var entity = this.entities[i];
+                    entity.tick();
+                } catch (ex) {
+                    console.error(ex);
+                }
             }
         };
         GameBoard.prototype.renderMapZone = function (mapZoneData) {
@@ -59,7 +63,7 @@ var Game;
                 width: mapZoneLayer.getWidth(),
                 height: mapZoneLayer.getHeight(),
                 name: 'background',
-                fill: 'white'
+                fill: 'green'
             });
             mapZoneLayer.KineticLayer.add(box);
             this.stage.add(mapZoneLayer.KineticLayer);
@@ -84,17 +88,16 @@ var Game;
         };
         GameBoard.prototype.addEntity = function (entity) {
             this.entities.push(entity);
-            entity.setGameBoard(this);
             var kineticGroup;
             if(entity.canMove()) {
-                entity.setParentLayer(this.movableEntitiesLayer, 0, 0);
+                entity.setParentLayer(this.movableEntitiesLayer);
                 kineticGroup = entity.getKineticGroup();
                 this.movableEntitiesLayer.add(kineticGroup);
             } else {
-                var layerUnderPoint = this.getLayerUnderPoint(entity._x, entity._y);
-                entity.setParentLayer(layerUnderPoint.KineticLayer, layerUnderPoint.getWorldX(), layerUnderPoint.getWorldY());
+                var layerUnderPoint = this.getLayerUnderPoint(entity._worldX, entity._worldY).KineticLayer;
+                entity.setParentLayer(layerUnderPoint);
                 kineticGroup = entity.getKineticGroup();
-                layerUnderPoint.KineticLayer.add(kineticGroup);
+                layerUnderPoint.add(kineticGroup);
             }
         };
         return GameBoard;

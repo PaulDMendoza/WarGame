@@ -24,9 +24,9 @@ module Game {
                 }
             });
 
-            soldier.KineticImage.on('click', function () {
-                self.move(self._group.getX() + 50, self._group.getY() + 50, {
-                    pixelsPerSecond: 10
+            soldier.KineticImage.on('click touchend', function () {
+                self.move(self.getWorldX() + 50, self.getWorldY() + 50, {
+                    pixelsPerSecond: 20
                 });
             });
                         

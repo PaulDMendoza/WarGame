@@ -81,7 +81,11 @@ var Game;
                 returnResult.KineticImage.setOffset(options.offset[0], options.offset[1]);
             }
             returnResult.imageObj.onload = function () {
-                self._group.add(returnResult.KineticImage);
+                if(options.group === undefined) {
+                    self._group.add(returnResult.KineticImage);
+                } else {
+                    options.group.add(returnResult.KineticImage);
+                }
                 self.draw();
                 if(options.onLoadPostDraw) {
                     options.onLoadPostDraw();

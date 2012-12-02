@@ -113,7 +113,7 @@ module Kinetic {
         getChildren();
         getIntersections(point);
         isAncestorOf(node);
-        remove(child);
+        remove(child?);
         removeChildren();
     }
 

@@ -114,14 +114,18 @@ module Game {
             }
 
             returnResult.imageObj.onload = function () {
-                self._group.add(returnResult.KineticImage);
+                if (options.group === undefined) {
+                    self._group.add(returnResult.KineticImage);
+                } else {
+                    options.group.add(returnResult.KineticImage);
+                }
                 self.draw();
                 if (options.onLoadPostDraw) {
                     options.onLoadPostDraw();
                 }
             };
             returnResult.imageObj.src = options.url;
-
+            
             return returnResult;
         }
 
@@ -173,6 +177,7 @@ module Game {
         url: string;
         offset?: number[];
         onLoadPostDraw?: () =>void;
+        group?: Kinetic.Group;
     }
 
     export interface IEntity_AddImage_Result {

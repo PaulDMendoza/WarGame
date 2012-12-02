@@ -22,6 +22,12 @@ module Game {
         public static radiansBetweenPoints(x1: number, y1: number, x2: number, y2: number): number {
             return Math.atan2(y2 - y1, x2 - x1);
         }
+
+        // Never returns 0
+        public static randomInteger(maxValue: number) : number {
+            
+            return Math.floor((Math.random()*maxValue)+1);
+        }
     }    
 
     // Class
