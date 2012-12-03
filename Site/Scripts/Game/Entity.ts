@@ -7,9 +7,9 @@
 module Game {
 
     export class Entity {
-        
+
         _x: number;
-        _y: number;        
+        _y: number;
         _parentLayerOffsetX: number;
         _parentLayerOffsetY: number;
         _parentLayer: Kinetic.Layer;
@@ -18,7 +18,7 @@ module Game {
 
         constructor (config: IEntityConfiguration) {
             this._x = config.worldX;
-            this._y = config.worldY;            
+            this._y = config.worldY;
         }
 
         setGameBoard(gameBoard: GameBoard) {
@@ -38,7 +38,7 @@ module Game {
         getWorldY() {
             return this._group.getY();
         }
-        
+
         // Gets the Kinetic.Group used for all rendering type activies. Calling this 
         // method sets the this._group property and returns that group.
         getKineticGroup() {
@@ -49,7 +49,7 @@ module Game {
             return this._group;
         }
 
-        setParentLayer(parentLayer: Kinetic.Layer, parentLayerOffsetX : number, parentLayerOffsetY: number) {
+        setParentLayer(parentLayer: Kinetic.Layer, parentLayerOffsetX: number, parentLayerOffsetY: number) {
             this._parentLayer = parentLayer;
             this._parentLayerOffsetX = parentLayerOffsetX;
             this._parentLayerOffsetY = parentLayerOffsetY;
@@ -94,11 +94,11 @@ module Game {
 
             returnResult.imageObj = new Image();
 
-            var x = options.x 
-            if(x === undefined)
+            var x = options.x
+            if (x === undefined)
                 x = (options.width / 2) * -1;
-            var y = options.y 
-            if(y === undefined) 
+            var y = options.y
+            if (y === undefined)
                 y = (options.height / 2) * -1;
 
             returnResult.KineticImage = new Kinetic.Image({
@@ -125,12 +125,12 @@ module Game {
                 }
             };
             returnResult.imageObj.src = options.url;
-            
+
             return returnResult;
         }
 
         // Gets called periodically. It returns a value for when to call this function next.
-        tick() {            
+        tick() {
             this._x = this._group.getX();
             this._y = this._group.getY();
         }
@@ -142,9 +142,9 @@ module Game {
                 var entity = this._gameBoard.entities[i];
                 if (entity === this)
                     continue;
-                
+
                 var distance = Game.Utilities.distanceBetweenPoints(this.getWorldX(), this.getWorldY(), entity.getWorldX(), entity.getWorldY());
-                
+
                 var radiansToEntity = Utilities.radiansBetweenPoints(entity.getWorldX(), entity.getWorldY(), this.getWorldX(), this.getWorldY());
 
                 if (distance < withinPixelRange) {
@@ -157,6 +157,74 @@ module Game {
             }
             return entitiesWithinRange;
         }
+
+
+
+        shoot(options: IEntity_Shoot_Options) {
+            var self = this;
+            var rotation = Utilities.radiansBetweenPoints(this.getWorldX(), this.getWorldY(), options.targetX, options.targetY);
+
+            var bulletGroup = new Kinetic.Group();
+            var gunTipX = this.getWorldX();
+            var gunTipY = this.getWorldY();
+
+            var line = new Kinetic.Circle({
+                x: gunTipX - this._group.getX(),
+                y: gunTipY - this._group.getY(),
+                fill: 'black',
+                radius: 1
+            });
+            bulletGroup.add(line);
+
+            var randomHits = [-16, -40, -15, -20, -32, 80, 90, 8, 32, 16, 25, 4, 5, 6];
+
+            var randomOffsetX = randomHits[Utilities.randomInteger(randomHits.length - 1)];
+            var randomOffsetY = randomHits[Utilities.randomInteger(randomHits.length - 1)];
+
+            var hitX = options.targetX - this._group.getX() + randomOffsetX;
+            var hitY = options.targetY - this._group.getY() + randomOffsetY;
+
+            var bulletHit = self.addImage({
+                url: "/Images/GameAssets/BulletImpact-1.png",
+                x: hitX,
+                y: hitY,
+                width: 4,
+                height: 4,
+                group: bulletGroup
+            });
+            bulletHit.KineticImage.hide();
+            this._group.add(bulletGroup);
+            this.draw();
+
+            var distance = Utilities.distanceBetweenPoints(this.getWorldX(), this.getWorldY(), options.targetX, options.targetY);
+
+            line.transitionTo({
+                x: hitX,
+                y: hitY,
+                duration: distance / 200,
+                callback: function () {
+                    line.hide();
+                    bulletHit.KineticImage.show();
+                    bulletHit.KineticImage.transitionTo({
+                        width: 32,
+                        height: 32,
+                        opacity: .9,
+                        offset: { x: 16, y: 16 },
+                        duration: 0.15,
+                        callback: function () {
+                            bulletGroup.remove();
+                        }
+                    });
+                }
+            });
+
+            
+        }
+    }
+
+    export interface IEntity_Shoot_Options {
+        targetX: number;
+        targetY: number;
     }
 
     export interface IEntityConfiguration {
@@ -178,7 +246,7 @@ module Game {
         offset?: Kinetic.Vector2d;
         onLoadPostDraw?: () =>void;
         group?: Kinetic.Group;
-        scale?: Kinetic.Vector2d;        
+        scale?: Kinetic.Vector2d;
     }
 
     export interface IEntity_AddImage_Result {
@@ -189,7 +257,7 @@ module Game {
     export interface IEntity_FindEntities_Result {
         entity: Entity;
         distance: number;
-        radiansToEntity: number;        
+        radiansToEntity: number;
     }
 }
 
@@ -199,16 +267,16 @@ QUnit.testDone(function () {
 });
 QUnit.test("constructor", function () {
     var e = new Game.Entity({
-        worldX: 400, 
+        worldX: 400,
         worldY: 500
     });
     QUnit.strictEqual(400, e._x, "_x");
-    QUnit.strictEqual(500, e._y, "_y");  
-      
+    QUnit.strictEqual(500, e._y, "_y");
+
 });
 QUnit.test("findEntities", function () {
     var gb = setupTestGameBoard();
-    var e = new Game.Entity({worldX: 0, worldY: 0 });
+    var e = new Game.Entity({ worldX: 0, worldY: 0 });
     var e2 = new Game.Entity({ worldX: 0, worldY: 500 });
     gb.addEntity(e);
     gb.addEntity(e2);
@@ -220,9 +288,9 @@ QUnit.test("findEntities", function () {
 
 QUnit.test("getX and getY", function () {
     var gb = setupTestGameBoard();
-    var e = new Game.Entity({worldX: 250, worldY: 60 });    
+    var e = new Game.Entity({ worldX: 250, worldY: 60 });
     gb.addEntity(e);
-    
+
     QUnit.strictEqual(250, e.getWorldX(), "getWorldX");
-    QUnit.strictEqual(60, e.getWorldY(), "getWorldY");    
+    QUnit.strictEqual(60, e.getWorldY(), "getWorldY");
 });
