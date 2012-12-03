@@ -31,7 +31,6 @@ module Game {
         worldY: number;
     }
 
-
     export class GameBoard {
         public gameBoardID: string;
         public stage: Kinetic.Stage;

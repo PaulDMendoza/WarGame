@@ -16,19 +16,38 @@ var Game;
         Sniper.prototype.getKineticGroup = function () {
             var self = this;
             var group = _super.prototype.getKineticGroup.call(this);
-            var soldier = this.addImage({
+            this._soldier = this.addImage({
                 url: "/Images/GameAssets/Soldiers/Sniper.png",
                 width: 48,
                 height: 48,
                 onLoadPostDraw: function () {
                 }
             });
-            soldier.KineticImage.on('click touchend', function () {
+            this._soldier.KineticImage.on('click touchend', function () {
                 self.move(self.getWorldX() + 50, self.getWorldY() + 50, {
                     pixelsPerSecond: 20
                 });
             });
             return group;
+        };
+        Sniper.prototype.tick = function () {
+            if(this._soldier) {
+                var entitiesWithinRange = this.findEntities(400);
+                if(entitiesWithinRange.length > 0) {
+                    var nearestEntity = Enumerable.From(entitiesWithinRange).Where(function (ed) {
+                        return !(ed.entity instanceof Sniper);
+                    }).OrderBy(function (ed) {
+                        return ed.distance;
+                    }).FirstOrDefault(undefined);
+                    if(nearestEntity) {
+                        _super.prototype.shoot.call(this, {
+                            targetX: nearestEntity.entity.getWorldX(),
+                            targetY: nearestEntity.entity.getWorldY()
+                        });
+                    }
+                } else {
+                }
+            }
         };
         return Sniper;
     })(Game.Entity);
