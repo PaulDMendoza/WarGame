@@ -70,10 +70,6 @@ module Game {
                 radius: 1
             });
             bulletGroup.add(line);
-            this._group.add(bulletGroup);
-            this.draw();
-
-            var distance = Utilities.distanceBetweenPoints(this.getWorldX(), this.getWorldY(), x, y);
 
             var randomHits = [-16, -40, -15, -20, -15, 4, 0, 8, 32, 16, 25, 4, 5, 6];
 
@@ -82,30 +78,33 @@ module Game {
             
             var hitX = x - this._group.getX() + randomOffsetX;
             var hitY = y - this._group.getY() + randomOffsetY;
+
+
+            var bulletHit = self.addImage({
+                        url: "/Images/GameAssets/BulletImpact-1.png",
+                        x: hitX,
+                        y: hitY,
+                        width: 32,
+                        height: 32,                
+                        offset: [16, 16],
+                        group: bulletGroup                
+                    });
+            bulletHit.KineticImage.setScale(0);
+            this._group.add(bulletGroup);
+            this.draw();
+
+            var distance = Utilities.distanceBetweenPoints(this.getWorldX(), this.getWorldY(), x, y);
+                        
             line.transitionTo({
                 x: hitX,
                 y: hitY,
                 duration: distance / 200,                
                 callback: function () {
                     line.hide();
-                    // TODO: I suspect this is failing here because we're adding the bullet impact to the
-                    // layer for the group instead of to the layer for the bulletGroup which is messing this up.
-                    // I think I need to make a function that allows me to specify the group I want the 
-                    // image added to.
-                    var bulletHit = self.addImage({
-                        url: "/Images/GameAssets/BulletImpact-1.png",
-                        x: hitX,
-                        y: hitY,
-                        width: 3,
-                        height: 3,
-                        group: bulletGroup
-                    });
-                    this.draw();
                     
                     bulletHit.KineticImage.transitionTo({
-                        width: 32,
-                        height: 32,
-                        duration: 0.5,
+                        scale: [1, 1],                        
+                        duration: 0.5,                        
                         callback: function () {
                             bulletGroup.hide();
                         }
@@ -113,6 +112,7 @@ module Game {
                 }
             });
         }
-
     }
 }
+
+

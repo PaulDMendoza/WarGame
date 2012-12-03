@@ -1,30 +1,19 @@
 var Game;
 (function (Game) {
-    var Utilities = (function () {
-        function Utilities() { }
-        Utilities.distanceBetweenPoints = function distanceBetweenPoints(x1, y1, x2, y2) {
-            var distanceX = Math.abs(x1 - x2);
-            var distanceY = Math.abs(y1 - y2);
-            var tangent = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
-            return tangent;
-        }
-        Utilities.radiansBetweenPoints = function radiansBetweenPoints(x1, y1, x2, y2) {
-            return Math.atan2(y2 - y1, x2 - x1);
-        }
-        Utilities.randomInteger = function randomInteger(maxValue) {
-            return Math.floor((Math.random() * maxValue) + 1);
-        }
-        return Utilities;
-    })();
-    Game.Utilities = Utilities;    
     var GameController = (function () {
         function GameController() {
         }
         GameController.prototype.start = function () {
             var gameBoard = new Game.GameBoard('gameBoard');
             gameBoard.init();
-            gameBoard.renderMapZone(zone1);
-            gameBoard.renderMapZone(zone2);
+            gameBoard.renderMapZone({
+                worldX: 0,
+                worldY: 0
+            });
+            gameBoard.renderMapZone({
+                worldX: 512,
+                worldY: 512
+            });
             gameBoard.renderMapZone({
                 worldX: 0,
                 worldY: 512
@@ -57,13 +46,5 @@ var Game;
 })(Game || (Game = {}));
 $(function () {
     var p = new Game.GameController();
-    var dist = p.start();
+    p.start();
 });
-var zone1 = {
-    worldX: 0,
-    worldY: 0
-};
-var zone2 = {
-    worldX: 512,
-    worldY: 512
-};

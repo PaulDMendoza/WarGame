@@ -82,7 +82,7 @@ module Kinetic {
         setPosition(x: number, y: number): void;
         setRotation(theta: number): void;
         setRotationDeg(rotDeg: number): void;
-        setScale(x: number, y: number): void;
+        setScale(x: number, y?: number): void;
         setX(x: number): void;
         setY(y: number): void;
         setZIndex(zIndex: number): void;
@@ -100,8 +100,8 @@ module Kinetic {
         opacity?: number;
         strokeWidth?: number;
         radius?: number;
-        scale?: Vector2d;
-        offset?: Vector2d;        
+        scale?: number[];
+        offset?: number[];        
         easing?: string;
         callback?: () => void;
     }
@@ -113,7 +113,7 @@ module Kinetic {
         getChildren();
         getIntersections(point);
         isAncestorOf(node);
-        remove(child?);
+        remove();
         removeChildren();
     }
 

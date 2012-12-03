@@ -7,7 +7,7 @@
 module Game {
 
     export class Entity {
-
+        
         _x: number;
         _y: number;        
         _parentLayerOffsetX: number;
@@ -190,6 +190,38 @@ module Game {
         distance: number;
         radiansToEntity: number;        
     }
-
-
 }
+
+QUnit.module("Entity");
+QUnit.testDone(function () {
+    destroyTestGameBoard();
+});
+QUnit.test("constructor", function () {
+    var e = new Game.Entity({
+        worldX: 400, 
+        worldY: 500
+    });
+    QUnit.strictEqual(400, e._x, "_x");
+    QUnit.strictEqual(500, e._y, "_y");  
+      
+});
+QUnit.test("findEntities", function () {
+    var gb = setupTestGameBoard();
+    var e = new Game.Entity({worldX: 0, worldY: 0 });
+    var e2 = new Game.Entity({ worldX: 0, worldY: 500 });
+    gb.addEntity(e);
+    gb.addEntity(e2);
+    var nearby100 = e.findEntities(100);
+    QUnit.strictEqual(0, nearby100.length, "entities out of range");
+    var nearby600 = e.findEntities(600);
+    QUnit.strictEqual(1, nearby600.length, "one entity in range");
+});
+
+QUnit.test("getX and getY", function () {
+    var gb = setupTestGameBoard();
+    var e = new Game.Entity({worldX: 250, worldY: 60 });    
+    gb.addEntity(e);
+    
+    QUnit.strictEqual(250, e.getWorldX(), "getWorldX");
+    QUnit.strictEqual(60, e.getWorldY(), "getWorldY");    
+});

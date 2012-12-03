@@ -308,6 +308,13 @@
     <Content Include="Scripts\TypeScriptDefinitions\knockout-2.2.d.ts" />
     <Content Include="Scripts\TypeScriptDefinitions\linq-2.2.d.ts" />
     <Content Include="Scripts\TypeScriptDefinitions\qunit-1.10.d.ts" />
+    <TypeScriptCompile Include="Scripts\Game\Utilities.ts" />
+    <Content Include="Scripts\Game\Utilities.js">
+      <DependentUpon>Utilities.ts</DependentUpon>
+    </Content>
+    <Content Include="Scripts\Game\Utilities.min.js">
+      <DependentUpon>Utilities.ts</DependentUpon>
+    </Content>
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

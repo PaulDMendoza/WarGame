@@ -36,20 +36,20 @@ var Game;
             });
             this.movableEntitiesLayer = new Kinetic.Layer();
             this.stage.add(this.movableEntitiesLayer);
-            setInterval(function () {
+            this._gameLoopInterval = setInterval(function () {
                 self.gameLoop();
             }, 250);
         };
         GameBoard.prototype.gameLoop = function () {
             var entitiesLen = this.entities.length;
             for(var i = 0; i < entitiesLen; i++) {
-                try  {
-                    var entity = this.entities[i];
-                    entity.tick();
-                } catch (ex) {
-                    console.error(ex);
-                }
+                var entity = this.entities[i];
+                entity.tick();
             }
+        };
+        GameBoard.prototype.dispose = function () {
+            clearInterval(this._gameLoopInterval);
+            this.stage.remove();
         };
         GameBoard.prototype.renderMapZone = function (mapZoneData) {
             var mapZoneLayer = new MapZoneLayer();
@@ -63,7 +63,7 @@ var Game;
                 width: mapZoneLayer.getWidth(),
                 height: mapZoneLayer.getHeight(),
                 name: 'background',
-                fill: 'green'
+                fill: 'white'
             });
             mapZoneLayer.KineticLayer.add(box);
             this.stage.add(mapZoneLayer.KineticLayer);
@@ -88,19 +88,53 @@ var Game;
         };
         GameBoard.prototype.addEntity = function (entity) {
             this.entities.push(entity);
+            entity.setGameBoard(this);
             var kineticGroup;
             if(entity.canMove()) {
-                entity.setParentLayer(this.movableEntitiesLayer);
+                entity.setParentLayer(this.movableEntitiesLayer, 0, 0);
                 kineticGroup = entity.getKineticGroup();
                 this.movableEntitiesLayer.add(kineticGroup);
             } else {
-                var layerUnderPoint = this.getLayerUnderPoint(entity._worldX, entity._worldY).KineticLayer;
-                entity.setParentLayer(layerUnderPoint);
+                var layerUnderPoint = this.getLayerUnderPoint(entity._x, entity._y);
+                entity.setParentLayer(layerUnderPoint.KineticLayer, layerUnderPoint.getWorldX(), layerUnderPoint.getWorldY());
                 kineticGroup = entity.getKineticGroup();
-                layerUnderPoint.add(kineticGroup);
+                layerUnderPoint.KineticLayer.add(kineticGroup);
             }
         };
         return GameBoard;
     })();
     Game.GameBoard = GameBoard;    
 })(Game || (Game = {}));
+QUnit.module("GameBoard");
+var testGameBoard;
+function destroyTestGameBoard() {
+    if(testGameBoard) {
+        testGameBoard.dispose();
+    }
+}
+function setupTestGameBoard() {
+    testGameBoard = new Game.GameBoard('testGameBoard');
+    testGameBoard.init();
+    testGameBoard.renderMapZone({
+        worldX: 0,
+        worldY: 0
+    });
+    testGameBoard.renderMapZone({
+        worldX: 512,
+        worldY: 0
+    });
+    return testGameBoard;
+}
+QUnit.testDone(function (details) {
+    destroyTestGameBoard();
+});
+QUnit.test("getLayerUnderPoint", function () {
+    var gb = setupTestGameBoard();
+    var z = {
+        worldX: 1024,
+        worldY: 1024
+    };
+    gb.renderMapZone(z);
+    var layer = testGameBoard.getLayerUnderPoint(1026, 1026);
+    QUnit.ok(layer.ZoneData == z, "checking zone is valid");
+});

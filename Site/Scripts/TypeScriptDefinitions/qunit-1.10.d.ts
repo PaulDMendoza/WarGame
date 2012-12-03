@@ -70,7 +70,8 @@ interface QUnitAssert {
 
 interface QUnitStatic extends QUnitAssert{	
 	/* ASYNC CONTROL */
-	start(decrement?: number);
+    shouldRunTests: bool;
+    start(decrement?: number);
 	stop(increment? : number);
 	
 	/* CALLBACKS */

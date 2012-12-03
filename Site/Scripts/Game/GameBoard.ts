@@ -41,7 +41,7 @@ module Game {
 
         public entities: Entity[];
         public mapZoneLayers: MapZoneLayer[];
-
+        public _gameLoopInterval: any;
 
         constructor (gameBoardID?: string) {
             this.gameBoardID = gameBoardID;
@@ -54,6 +54,7 @@ module Game {
             var $gameBoard = $('#' + this.gameBoardID);
             var width = $gameBoard.parent().width();
             var height = width;
+            
 
             this.stage = new Kinetic.Stage({
                 container: this.gameBoardID,
@@ -64,7 +65,7 @@ module Game {
             this.movableEntitiesLayer = new Kinetic.Layer();
             this.stage.add(this.movableEntitiesLayer);
 
-            setInterval(function () { self.gameLoop(); }, 250);
+            this._gameLoopInterval = setInterval(function () { self.gameLoop(); }, 250);
         }
 
         gameLoop() {
@@ -72,7 +73,13 @@ module Game {
             for (var i = 0; i < entitiesLen; i++) {
                 var entity = this.entities[i];
                 entity.tick();
-            }
+            }            
+        }
+
+        dispose() {
+            
+            clearInterval(this._gameLoopInterval);
+            this.stage.remove();
         }
 
         renderMapZone(mapZoneData: IMapZone) {
@@ -135,25 +142,34 @@ module Game {
 }
 
 
-//QUnit.module("GameBoard");
-//QUnit.test("getLayerUnderPoint", function () {
+QUnit.module("GameBoard");
+var testGameBoard : Game.GameBoard;
+function destroyTestGameBoard() : void {
+    if (testGameBoard) {
+        testGameBoard.dispose();
+    }
+}
+function setupTestGameBoard() : Game.GameBoard {
+    testGameBoard = new Game.GameBoard('testGameBoard');
+    testGameBoard.init();
+    
+    testGameBoard.renderMapZone({ worldX: 0, worldY: 0 });
+    testGameBoard.renderMapZone({ worldX: 512, worldY: 0 });
+    return testGameBoard;
+}
 
-//    var gameBoard = new Game.GameBoard('testGameBoard');
-//    gameBoard.init();
-//    var zone1 = <Game.IMapZone>{
-//        worldX: 0,
-//        worldY: 0
-//    };
 
-//    var zone2 = <Game.IMapZone>{
-//        worldX: 512,
-//        worldY: 512
-//    };
+QUnit.testDone(function (details) {
+    destroyTestGameBoard();
+});
+QUnit.test("getLayerUnderPoint", function () {
+    var gb = setupTestGameBoard();
+    var z = {
+        worldX: 1024, worldY: 1024
+    };
+    gb.renderMapZone(z);
 
-//    gameBoard.renderMapZone(zone1);
-//    gameBoard.renderMapZone(zone2);
-//    var layer = gameBoard.getLayerUnderPoint(600, 256);
-//    QUnit.ok(layer.ZoneData == zone2, "checking zone is valid");
-
-//});
+    var layer = testGameBoard.getLayerUnderPoint(1026, 1026);
+    QUnit.ok(layer.ZoneData == z, "checking zone is valid");    
+});
 
