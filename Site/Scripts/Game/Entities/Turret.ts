@@ -84,15 +84,14 @@ module Game {
                         url: "/Images/GameAssets/BulletImpact-1.png",
                         x: hitX,
                         y: hitY,
-                        width: 32,
-                        height: 32,                
-                        offset: [16, 16],
+                        width: 4,
+                        height: 4,                        
                         group: bulletGroup                
                     });
-            bulletHit.KineticImage.setScale(0);
+            bulletHit.KineticImage.hide();
             this._group.add(bulletGroup);
             this.draw();
-
+            
             var distance = Utilities.distanceBetweenPoints(this.getWorldX(), this.getWorldY(), x, y);
                         
             line.transitionTo({
@@ -101,10 +100,12 @@ module Game {
                 duration: distance / 200,                
                 callback: function () {
                     line.hide();
-                    
+                    bulletHit.KineticImage.show();
                     bulletHit.KineticImage.transitionTo({
-                        scale: [1, 1],                        
-                        duration: 0.5,                        
+                        width: 32,
+                        height: 32,
+                        offset: [16, 0],                      
+                        duration: 1,                        
                         callback: function () {
                             bulletGroup.hide();
                         }
