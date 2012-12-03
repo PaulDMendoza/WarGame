@@ -9,8 +9,8 @@ module Game {
             return tangent;
         }
 
-        public static radiansBetweenPoints(x1: number, y1: number, x2: number, y2: number): number {
-            return Math.atan2(y2 - y1, x2 - x1);
+        public static radiansBetweenPoints(xOrigin: number, yOrigin: number, xDestination: number, yDestination: number): number {
+            return Math.atan2(yOrigin - yDestination, xOrigin - xDestination);
         }
 
         public static randomInteger(maxValue: number): number {

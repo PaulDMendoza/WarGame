@@ -1,14 +1,9 @@
-var __extends = this.__extends || function (d, b) {
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
 var Game;
 (function (Game) {
     var Turret = (function (_super) {
         __extends(Turret, _super);
         function Turret(config) {
-                _super.call(this, config);
+            _super.prototype(config);
         }
         Turret.prototype.getKineticGroup = function () {
             var self = this;
@@ -23,10 +18,10 @@ var Game;
                         y: 0,
                         width: 128,
                         height: 128,
-                        offset: {
-                            x: 64,
-                            y: 64
-                        },
+                        offset: [
+                            65, 
+                            64
+                        ],
                         url: "/Images/GameAssets/Soldiers/MachineGunner.png",
                         onLoadPostDraw: function () {
                         }
@@ -69,9 +64,9 @@ var Game;
                 -40, 
                 -15, 
                 -20, 
-                -32, 
-                80, 
-                90, 
+                -15, 
+                4, 
+                0, 
                 8, 
                 32, 
                 16, 
@@ -88,6 +83,10 @@ var Game;
                 url: "/Images/GameAssets/BulletImpact-1.png",
                 x: hitX,
                 y: hitY,
+                scale: {
+                    x: 0,
+                    y: 0
+                },
                 width: 4,
                 height: 4,
                 group: bulletGroup
@@ -106,12 +105,11 @@ var Game;
                     bulletHit.KineticImage.transitionTo({
                         width: 32,
                         height: 32,
-                        opacity: 0.9,
                         offset: {
                             x: 16,
-                            y: 16
+                            y: 0
                         },
-                        duration: 0.15,
+                        duration: 1,
                         callback: function () {
                             bulletGroup.hide();
                         }
@@ -120,6 +118,6 @@ var Game;
             });
         };
         return Turret;
-    })(Game.Entity);
+    })(Entity);
     Game.Turret = Turret;    
 })(Game || (Game = {}));

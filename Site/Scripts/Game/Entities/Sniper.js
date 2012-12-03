@@ -1,14 +1,9 @@
-var __extends = this.__extends || function (d, b) {
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
 var Game;
 (function (Game) {
     var Sniper = (function (_super) {
         __extends(Sniper, _super);
         function Sniper(config) {
-                _super.call(this, config);
+            _super.prototype(config);
         }
         Sniper.prototype.canMove = function () {
             return true;
@@ -31,6 +26,6 @@ var Game;
             return group;
         };
         return Sniper;
-    })(Game.Entity);
+    })(Entity);
     Game.Sniper = Sniper;    
 })(Game || (Game = {}));
