@@ -110,7 +110,7 @@ module Game {
             });
 
             if (options.offset) {
-                returnResult.KineticImage.setOffset(options.offset[0], options.offset[1]);
+                returnResult.KineticImage.setOffset(options.offset.x, options.offset.y);
             }
 
             returnResult.imageObj.onload = function () {
@@ -175,9 +175,10 @@ module Game {
         width: number;
         height: number;
         url: string;
-        offset?: number[];
+        offset?: Kinetic.Vector2d;
         onLoadPostDraw?: () =>void;
         group?: Kinetic.Group;
+        scale?: Kinetic.Vector2d;        
     }
 
     export interface IEntity_AddImage_Result {

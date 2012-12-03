@@ -78,7 +78,7 @@ var Game;
                 height: options.height
             });
             if(options.offset) {
-                returnResult.KineticImage.setOffset(options.offset[0], options.offset[1]);
+                returnResult.KineticImage.setOffset(options.offset.x, options.offset.y);
             }
             returnResult.imageObj.onload = function () {
                 if(options.group === undefined) {

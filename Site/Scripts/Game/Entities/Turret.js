@@ -23,10 +23,10 @@ var Game;
                         y: 0,
                         width: 128,
                         height: 128,
-                        offset: [
-                            65, 
-                            64
-                        ],
+                        offset: {
+                            x: 64,
+                            y: 64
+                        },
                         url: "/Images/GameAssets/Soldiers/MachineGunner.png",
                         onLoadPostDraw: function () {
                         }
@@ -69,9 +69,9 @@ var Game;
                 -40, 
                 -15, 
                 -20, 
-                -15, 
-                4, 
-                0, 
+                -32, 
+                80, 
+                90, 
                 8, 
                 32, 
                 16, 
@@ -106,11 +106,12 @@ var Game;
                     bulletHit.KineticImage.transitionTo({
                         width: 32,
                         height: 32,
-                        offset: [
-                            16, 
-                            0
-                        ],
-                        duration: 1,
+                        opacity: 0.9,
+                        offset: {
+                            x: 16,
+                            y: 16
+                        },
+                        duration: 0.15,
                         callback: function () {
                             bulletGroup.hide();
                         }

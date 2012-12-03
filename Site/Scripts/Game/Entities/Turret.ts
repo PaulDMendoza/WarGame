@@ -19,12 +19,12 @@ module Game {
                 height: 128,
                 url: "/Images/GameAssets/MachineGunNest-1.png",
                 onLoadPostDraw: function () {
-                    self.machineGunner = self.addImage({
+                    self.machineGunner = self.addImage({                        
                         x: 0,
                         y: 0,
                         width: 128,
                         height: 128,
-                        offset: [65, 64],
+                        offset: { x: 64, y: 64 },
                         url: "/Images/GameAssets/Soldiers/MachineGunner.png",
                         onLoadPostDraw: function () {                            
                         }
@@ -35,8 +35,7 @@ module Game {
             return group;
         }
 
-        tick() {
-            
+        tick() {            
             if (this.machineGunner) {                
                 var entitiesWithinRange = this.findEntities(400);
                 if (entitiesWithinRange.length > 0) {
@@ -71,7 +70,7 @@ module Game {
             });
             bulletGroup.add(line);
 
-            var randomHits = [-16, -40, -15, -20, -15, 4, 0, 8, 32, 16, 25, 4, 5, 6];
+            var randomHits = [-16, -40, -15, -20, -32, 80, 90, 8, 32, 16, 25, 4, 5, 6];
 
             var randomOffsetX = randomHits[Utilities.randomInteger(randomHits.length - 1)];
             var randomOffsetY = randomHits[Utilities.randomInteger(randomHits.length - 1)];
@@ -83,7 +82,7 @@ module Game {
             var bulletHit = self.addImage({
                         url: "/Images/GameAssets/BulletImpact-1.png",
                         x: hitX,
-                        y: hitY,
+                        y: hitY, 
                         width: 4,
                         height: 4,                        
                         group: bulletGroup                
@@ -104,8 +103,9 @@ module Game {
                     bulletHit.KineticImage.transitionTo({
                         width: 32,
                         height: 32,
-                        offset: [16, 0],                      
-                        duration: 1,                        
+                        opacity: .9,
+                        offset: { x: 16, y: 16 },
+                        duration: 0.15,                        
                         callback: function () {
                             bulletGroup.hide();
                         }

@@ -100,8 +100,8 @@ module Kinetic {
         opacity?: number;
         strokeWidth?: number;
         radius?: number;
-        scale?: number[];
-        offset?: number[];        
+        scale?: Vector2d;
+        offset?: Vector2d;        
         easing?: string;
         callback?: () => void;
     }
