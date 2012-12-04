@@ -11,8 +11,8 @@ var Game;
         Utilities.radiansBetweenPoints = function radiansBetweenPoints(xOrigin, yOrigin, xDestination, yDestination) {
             return Math.atan2(yOrigin - yDestination, xOrigin - xDestination);
         }
-        Utilities.randomInteger = function randomInteger(maxValue) {
-            return Math.floor((Math.random() * maxValue) + 1);
+        Utilities.randomInteger = function randomInteger(maxValue, allowNegative) {
+            return Math.floor((Math.random() * maxValue) + 1) * ((allowNegative && Math.random() > 0.5) ? -1 : 1);
         }
         return Utilities;
     })();

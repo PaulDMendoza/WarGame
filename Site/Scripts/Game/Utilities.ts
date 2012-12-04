@@ -13,8 +13,8 @@ module Game {
             return Math.atan2(yOrigin - yDestination, xOrigin - xDestination);
         }
 
-        public static randomInteger(maxValue: number): number {
-            return Math.floor((Math.random() * maxValue) + 1);
+        public static randomInteger(maxValue: number, allowNegative?: bool): number {            
+            return Math.floor((Math.random() * maxValue) + 1) * ((allowNegative && Math.random() > .5) ? -1 : 1);
         }
     }
 }

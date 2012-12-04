@@ -42,7 +42,8 @@ var Game;
                     if(nearestEntity) {
                         _super.prototype.shoot.call(this, {
                             targetX: nearestEntity.entity.getWorldX(),
-                            targetY: nearestEntity.entity.getWorldY()
+                            targetY: nearestEntity.entity.getWorldY(),
+                            timeBetweenShots: 1.5
                         });
                     }
                 } else {

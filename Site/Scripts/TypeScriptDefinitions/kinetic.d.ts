@@ -144,7 +144,7 @@ module Kinetic {
     class Layer extends Container {
         constructor (config?: LayerConfig);
         afterDraw(handler: () =>{ });
-        beforeDraw(handler: () =>{ });
+        beforeDraw(handler: () =>void);
         clear();
         draw();
         drawBuffer();

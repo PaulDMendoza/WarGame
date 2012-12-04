@@ -41,19 +41,18 @@ module Game {
         public entities: Entity[];
         public mapZoneLayers: MapZoneLayer[];
         public _gameLoopInterval: any;
-
+        
         constructor (gameBoardID?: string) {
             this.gameBoardID = gameBoardID;
             this.entities = [];
-            this.mapZoneLayers = [];
+            this.mapZoneLayers = [];            
         }
 
         init() {
             var self = this;
             var $gameBoard = $('#' + this.gameBoardID);
             var width = $gameBoard.parent().width();
-            var height = width;
-            
+            var height = width;            
 
             this.stage = new Kinetic.Stage({
                 container: this.gameBoardID,
@@ -61,27 +60,38 @@ module Game {
                 height: height,
                 draggable: true
             });
+
             this.movableEntitiesLayer = new Kinetic.Layer();
-            this.stage.add(this.movableEntitiesLayer);
-
-            this._gameLoopInterval = setInterval(function () { self.gameLoop(); }, 250);
-        }
-
-        gameLoop() {
-            var entitiesLen = this.entities.length;
-            for (var i = 0; i < entitiesLen; i++) {
-                var entity = this.entities[i];
-                entity.tick();
-            }            
-        }
-
-        dispose() {
+            this.movableEntitiesLayer.beforeDraw(()=> { this.gameLoop(this); });
+            this.stage.add(this.movableEntitiesLayer);     
             
+            // This loop ensures that if the draw event isn't firing the game loop then this is at least trying to. 
+            this._gameLoopInterval = setInterval(() => { this.stage.draw() }, 1000);
+        }
+        
+        _lastTickTime: Date = new Date();
+        gameLoop(self : GameBoard) {   
+            if (self._lastTickTime === undefined) {
+                self._lastTickTime = new Date();
+            }
+            if (new Date(self._lastTickTime.getTime() + 250) <= new Date()) {
+                console.log("ticking");
+                self._lastTickTime = new Date();
+                var entitiesLen = self.entities.length;
+                for (var i = 0; i < entitiesLen; i++) {
+                    var entity = self.entities[i];
+                    entity.tick();
+                }
+            }
+        }
+
+        dispose() {            
             clearInterval(this._gameLoopInterval);
             this.stage.remove();
         }
 
         renderMapZone(mapZoneData: IMapZone) {
+            var self = this;
             var mapZoneLayer = new MapZoneLayer();
             mapZoneLayer.KineticLayer = new Kinetic.Layer();
 
@@ -99,6 +109,7 @@ module Game {
                 fill: 'white'
             });
             mapZoneLayer.KineticLayer.add(box);
+            mapZoneLayer.KineticLayer.beforeDraw(()=> { this.gameLoop(this); });
             this.stage.add(mapZoneLayer.KineticLayer);
             this.mapZoneLayers.push(mapZoneLayer);
             mapZoneLayer.KineticLayer.moveToBottom();

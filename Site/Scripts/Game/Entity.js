@@ -120,6 +120,10 @@ var Game;
         };
         Entity.prototype.shoot = function (options) {
             var self = this;
+            if(this._shoot_lastShotFired < new Date(Date.now() + (options.timeBetweenShots * 1000))) {
+                return;
+            }
+            this._shoot_lastShotFired = new Date(Date.now());
             var rotation = Game.Utilities.radiansBetweenPoints(this.getWorldX(), this.getWorldY(), options.targetX, options.targetY);
             var bulletGroup = new Kinetic.Group();
             var gunTipX = this.getWorldX();
@@ -131,24 +135,8 @@ var Game;
                 radius: 1
             });
             bulletGroup.add(line);
-            var randomHits = [
-                -16, 
-                -40, 
-                -15, 
-                -20, 
-                -32, 
-                80, 
-                90, 
-                8, 
-                32, 
-                16, 
-                25, 
-                4, 
-                5, 
-                6
-            ];
-            var randomOffsetX = randomHits[Game.Utilities.randomInteger(randomHits.length - 1)];
-            var randomOffsetY = randomHits[Game.Utilities.randomInteger(randomHits.length - 1)];
+            var randomOffsetX = Game.Utilities.randomInteger(80, true);
+            var randomOffsetY = Game.Utilities.randomInteger(80, true);
             var hitX = options.targetX - this._group.getX() + randomOffsetX;
             var hitY = options.targetY - this._group.getY() + randomOffsetY;
             var bulletHit = self.addImage({
@@ -166,7 +154,7 @@ var Game;
             line.transitionTo({
                 x: hitX,
                 y: hitY,
-                duration: distance / 200,
+                duration: distance / 250,
                 callback: function () {
                     line.hide();
                     bulletHit.KineticImage.show();

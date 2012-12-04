@@ -19,11 +19,13 @@ var Game;
     Game.MapZoneLayer = MapZoneLayer;    
     var GameBoard = (function () {
         function GameBoard(gameBoardID) {
+            this._lastTickTime = new Date();
             this.gameBoardID = gameBoardID;
             this.entities = [];
             this.mapZoneLayers = [];
         }
         GameBoard.prototype.init = function () {
+            var _this = this;
             var self = this;
             var $gameBoard = $('#' + this.gameBoardID);
             var width = $gameBoard.parent().width();
@@ -35,16 +37,26 @@ var Game;
                 draggable: true
             });
             this.movableEntitiesLayer = new Kinetic.Layer();
+            this.movableEntitiesLayer.beforeDraw(function () {
+                _this.gameLoop(_this);
+            });
             this.stage.add(this.movableEntitiesLayer);
             this._gameLoopInterval = setInterval(function () {
-                self.gameLoop();
-            }, 250);
+                _this.stage.draw();
+            }, 1000);
         };
-        GameBoard.prototype.gameLoop = function () {
-            var entitiesLen = this.entities.length;
-            for(var i = 0; i < entitiesLen; i++) {
-                var entity = this.entities[i];
-                entity.tick();
+        GameBoard.prototype.gameLoop = function (self) {
+            if(self._lastTickTime === undefined) {
+                self._lastTickTime = new Date();
+            }
+            if(new Date(self._lastTickTime.getTime() + 250) <= new Date()) {
+                console.log("ticking");
+                self._lastTickTime = new Date();
+                var entitiesLen = self.entities.length;
+                for(var i = 0; i < entitiesLen; i++) {
+                    var entity = self.entities[i];
+                    entity.tick();
+                }
             }
         };
         GameBoard.prototype.dispose = function () {
@@ -52,6 +64,8 @@ var Game;
             this.stage.remove();
         };
         GameBoard.prototype.renderMapZone = function (mapZoneData) {
+            var _this = this;
+            var self = this;
             var mapZoneLayer = new MapZoneLayer();
             mapZoneLayer.KineticLayer = new Kinetic.Layer();
             mapZoneLayer.ZoneData = mapZoneData;
@@ -66,6 +80,9 @@ var Game;
                 fill: 'white'
             });
             mapZoneLayer.KineticLayer.add(box);
+            mapZoneLayer.KineticLayer.beforeDraw(function () {
+                _this.gameLoop(_this);
+            });
             this.stage.add(mapZoneLayer.KineticLayer);
             this.mapZoneLayers.push(mapZoneLayer);
             mapZoneLayer.KineticLayer.moveToBottom();
