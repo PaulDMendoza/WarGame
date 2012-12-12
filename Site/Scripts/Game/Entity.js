@@ -101,9 +101,6 @@ var Game;
             this._y = this._group.getY();
         };
         Entity.prototype.findEntities = function (withinPixelRange, onlyLivingEntities) {
-            if(this.isDead()) {
-                return;
-            }
             var entitiesWithinRange = [];
             var entitiesLen = this._gameBoard.entities.length;
             for(var i = 0; i < entitiesLen; i++) {

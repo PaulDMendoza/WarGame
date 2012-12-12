@@ -10,7 +10,7 @@ module Game {
         }
 
         public static radiansBetweenPoints(xOrigin: number, yOrigin: number, xDestination: number, yDestination: number): number {
-            return Math.atan2(yOrigin - yDestination, xOrigin - xDestination);
+            return Math.atan2(yDestination - yOrigin, xDestination - xOrigin);
         }
 
         public static randomInteger(maxValue: number, allowNegative?: bool): number {            
@@ -27,8 +27,8 @@ QUnit.test("distanceBetweenPoints", function () {
 });
 
 QUnit.test("radiansBetweenPoints", function () {
-    QUnit.strictEqual(Math.round(Game.Utilities.radiansBetweenPoints(0, 0, 5, 0)), 3, "horizontal right");
-    QUnit.strictEqual(Math.round(Game.Utilities.radiansBetweenPoints(0, 0, -5, -5)), 1, "horizontal right");
+    QUnit.strictEqual(Math.round(Game.Utilities.radiansBetweenPoints(0, 0, 5, 0)), 0, "horizontal right");
+    QUnit.strictEqual(Math.round(Game.Utilities.radiansBetweenPoints(0, 0, -5, -5)), -2, "horizontal right");
 });
 
 QUnit.test("randomInteger", function () {

@@ -9,7 +9,7 @@ var Game;
             return tangent;
         }
         Utilities.radiansBetweenPoints = function radiansBetweenPoints(xOrigin, yOrigin, xDestination, yDestination) {
-            return Math.atan2(yOrigin - yDestination, xOrigin - xDestination);
+            return Math.atan2(yDestination - yOrigin, xDestination - xOrigin);
         }
         Utilities.randomInteger = function randomInteger(maxValue, allowNegative) {
             return Math.floor((Math.random() * maxValue) + 1) * ((allowNegative && Math.random() > 0.5) ? -1 : 1);
@@ -25,8 +25,8 @@ QUnit.test("distanceBetweenPoints", function () {
     QUnit.strictEqual(Math.round(Game.Utilities.distanceBetweenPoints(0, 0, 5, 5)), 7, "sqrt usage");
 });
 QUnit.test("radiansBetweenPoints", function () {
-    QUnit.strictEqual(Math.round(Game.Utilities.radiansBetweenPoints(0, 0, 5, 0)), 3, "horizontal right");
-    QUnit.strictEqual(Math.round(Game.Utilities.radiansBetweenPoints(0, 0, -5, -5)), 1, "horizontal right");
+    QUnit.strictEqual(Math.round(Game.Utilities.radiansBetweenPoints(0, 0, 5, 0)), 0, "horizontal right");
+    QUnit.strictEqual(Math.round(Game.Utilities.radiansBetweenPoints(0, 0, -5, -5)), -2, "horizontal right");
 });
 QUnit.test("randomInteger", function () {
     for(var i = 0; i < 10; i++) {

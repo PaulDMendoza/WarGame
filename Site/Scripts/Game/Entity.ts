@@ -136,9 +136,6 @@ module Game {
         }
 
         findEntities(withinPixelRange: number, onlyLivingEntities? : bool): IEntity_FindEntities_Result[] {
-            if(this.isDead())
-                return;
-            
             var entitiesWithinRange: IEntity_FindEntities_Result[] = [];
             var entitiesLen = this._gameBoard.entities.length;
             for (var i = 0; i < entitiesLen; i++) {
