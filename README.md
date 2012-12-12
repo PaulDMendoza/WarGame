@@ -3,6 +3,8 @@ War Game
 
 The vision for this game is that it will be similar to a games like **A Bridge to Far** or **Company of Heroes** but in the browser. 
 
+Let me know if you want to collaborate on this. I'd love to have help!
+
 #Roadmap
 
 ##Version 0.1
