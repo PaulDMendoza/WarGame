@@ -261,6 +261,13 @@
     <Content Include="Scripts\Game\Entity.min.js">
       <DependentUpon>Entity.ts</DependentUpon>
     </Content>
+    <TypeScriptCompile Include="Scripts\Game\EntityStatusView.ts" />
+    <Content Include="Scripts\Game\EntityStatusView.js">
+      <DependentUpon>EntityStatusView.ts</DependentUpon>
+    </Content>
+    <Content Include="Scripts\Game\EntityStatusView.min.js">
+      <DependentUpon>EntityStatusView.ts</DependentUpon>
+    </Content>
     <Content Include="Scripts\Game\GameBoard.js">
       <DependentUpon>GameBoard.ts</DependentUpon>
     </Content>

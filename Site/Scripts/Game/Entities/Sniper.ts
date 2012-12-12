@@ -6,6 +6,7 @@ module Game {
 
         constructor (config: IEntityConfiguration) {
             super(config);
+            this._health = 256;
         }
 
         canMove() {
@@ -36,7 +37,7 @@ module Game {
 
         tick() {
             if (this._soldier) {
-                var entitiesWithinRange = this.findEntities(400);
+                var entitiesWithinRange = this.findEntities(400, true);
                 if (entitiesWithinRange.length > 0) {
                     var nearestEntity = <IEntity_FindEntities_Result>Enumerable.From(entitiesWithinRange)
                          .Where(function (ed : IEntity_FindEntities_Result) { return !(ed.entity instanceof Sniper); })
@@ -46,13 +47,15 @@ module Game {
                         super.shoot({
                             targetX: nearestEntity.entity.getWorldX(),
                             targetY: nearestEntity.entity.getWorldY(),
-                            timeBetweenShots: 1.5
+                            timeBetweenShots: 1.5,
+                            entityShootingAt: nearestEntity.entity
                         });
                     }                    
                 } else {
 
                 }
             }
+            super.tick();
         }
     }
 }

@@ -42,7 +42,10 @@ var Game;
             });
             this.stage.add(this.movableEntitiesLayer);
             this._gameLoopInterval = setInterval(function () {
-                _this.stage.draw();
+                for(var i = 0; i < _this.mapZoneLayers.length; i++) {
+                    var layer = _this.mapZoneLayers[i];
+                    layer.KineticLayer.draw();
+                }
             }, 1000);
         };
         GameBoard.prototype.gameLoop = function (self) {
@@ -50,8 +53,8 @@ var Game;
                 self._lastTickTime = new Date();
             }
             if(new Date(self._lastTickTime.getTime() + 250) <= new Date()) {
-                console.log("ticking");
                 self._lastTickTime = new Date();
+                console.log("ticking");
                 var entitiesLen = self.entities.length;
                 for(var i = 0; i < entitiesLen; i++) {
                     var entity = self.entities[i];

@@ -9,6 +9,7 @@ var Game;
         __extends(Turret, _super);
         function Turret(config) {
                 _super.call(this, config);
+            this._health = 512;
         }
         Turret.prototype.getKineticGroup = function () {
             var self = this;
@@ -38,28 +39,29 @@ var Game;
         Turret.prototype.tick = function () {
             var self = this;
             if(this.machineGunner) {
-                var entitiesWithinRange = this.findEntities(400);
+                var entitiesWithinRange = this.findEntities(400, true);
                 if(entitiesWithinRange.length > 0) {
                     var nearestEntity = Enumerable.From(entitiesWithinRange).OrderBy(function (ed) {
                         return ed.distance;
                     }).First();
-                    this.machineGunner.KineticImage.transitionTo({
-                        rotation: nearestEntity.radiansToEntity,
-                        duration: 0.25
-                    });
                     _super.prototype.shoot.call(this, {
                         targetX: nearestEntity.entity.getWorldX(),
-                        targetY: nearestEntity.entity.getWorldY()
+                        targetY: nearestEntity.entity.getWorldY(),
+                        entityShootingAt: nearestEntity.entity
                     });
-                    if(this.machineGunner && this.machineGunner.KineticImage) {
+                    if(this.machineGunner && this.machineGunner.KineticImage && this._gunShakeAnimation === undefined) {
                         var rotation = Game.Utilities.radiansBetweenPoints(self.getWorldX(), self.getWorldY(), nearestEntity.entity.getWorldX(), nearestEntity.entity.getWorldY());
-                        var anim = new Kinetic.Animation(function (frame) {
+                        this._gunShakeAnimation = new Kinetic.Animation(function (frame) {
                             var angleDiff = rotation + (Game.Utilities.randomInteger(25) / 100);
                             self.machineGunner.KineticImage.setRotation(angleDiff);
                         }, self._parentLayer);
-                        anim.start();
+                        this._gunShakeAnimation.start();
                     }
                 } else {
+                    if(this._gunShakeAnimation) {
+                        this._gunShakeAnimation.stop();
+                        this._gunShakeAnimation = undefined;
+                    }
                 }
             }
             _super.prototype.tick.call(this);

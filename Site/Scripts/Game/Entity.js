@@ -2,6 +2,8 @@ var Game;
 (function (Game) {
     var Entity = (function () {
         function Entity(config) {
+            this._health = 256;
+            this._gunDamage = 16;
             this._x = config.worldX;
             this._y = config.worldY;
         }
@@ -98,12 +100,18 @@ var Game;
             this._x = this._group.getX();
             this._y = this._group.getY();
         };
-        Entity.prototype.findEntities = function (withinPixelRange) {
+        Entity.prototype.findEntities = function (withinPixelRange, onlyLivingEntities) {
+            if(this.isDead()) {
+                return;
+            }
             var entitiesWithinRange = [];
             var entitiesLen = this._gameBoard.entities.length;
             for(var i = 0; i < entitiesLen; i++) {
                 var entity = this._gameBoard.entities[i];
                 if(entity === this) {
+                    continue;
+                }
+                if(onlyLivingEntities && entity.isDead()) {
                     continue;
                 }
                 var distance = Game.Utilities.distanceBetweenPoints(this.getWorldX(), this.getWorldY(), entity.getWorldX(), entity.getWorldY());
@@ -119,6 +127,7 @@ var Game;
             return entitiesWithinRange;
         };
         Entity.prototype.shoot = function (options) {
+            var _this = this;
             var self = this;
             if(this._shoot_lastShotFired < new Date(Date.now() + (options.timeBetweenShots * 1000))) {
                 return;
@@ -156,6 +165,9 @@ var Game;
                 y: hitY,
                 duration: distance / 250,
                 callback: function () {
+                    if(options.entityShootingAt) {
+                        options.entityShootingAt.takeDamage(_this._gunDamage);
+                    }
                     line.hide();
                     bulletHit.KineticImage.show();
                     bulletHit.KineticImage.transitionTo({
@@ -173,6 +185,20 @@ var Game;
                     });
                 }
             });
+        };
+        Entity.prototype.takeDamage = function (damageTaken) {
+            this._health -= damageTaken;
+            if(this.isDead()) {
+                this.entityKilled();
+            }
+        };
+        Entity.prototype.entityKilled = function () {
+            this._health = 0;
+            this._group.removeChildren();
+            this.draw();
+        };
+        Entity.prototype.isDead = function () {
+            return this._health <= 0;
         };
         return Entity;
     })();

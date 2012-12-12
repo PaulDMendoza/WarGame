@@ -9,6 +9,7 @@ var Game;
         __extends(Sniper, _super);
         function Sniper(config) {
                 _super.call(this, config);
+            this._health = 256;
         }
         Sniper.prototype.canMove = function () {
             return true;
@@ -32,7 +33,7 @@ var Game;
         };
         Sniper.prototype.tick = function () {
             if(this._soldier) {
-                var entitiesWithinRange = this.findEntities(400);
+                var entitiesWithinRange = this.findEntities(400, true);
                 if(entitiesWithinRange.length > 0) {
                     var nearestEntity = Enumerable.From(entitiesWithinRange).Where(function (ed) {
                         return !(ed.entity instanceof Sniper);
@@ -43,12 +44,14 @@ var Game;
                         _super.prototype.shoot.call(this, {
                             targetX: nearestEntity.entity.getWorldX(),
                             targetY: nearestEntity.entity.getWorldY(),
-                            timeBetweenShots: 1.5
+                            timeBetweenShots: 1.5,
+                            entityShootingAt: nearestEntity.entity
                         });
                     }
                 } else {
                 }
             }
+            _super.prototype.tick.call(this);
         };
         return Sniper;
     })(Game.Entity);

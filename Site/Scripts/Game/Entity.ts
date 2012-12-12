@@ -15,7 +15,7 @@ module Game {
         _parentLayer: Kinetic.Layer;
         _group: Kinetic.Group;
         _gameBoard: GameBoard;
-
+        
         constructor (config: IEntityConfiguration) {
             this._x = config.worldX;
             this._y = config.worldY;
@@ -135,12 +135,17 @@ module Game {
             this._y = this._group.getY();
         }
 
-        findEntities(withinPixelRange: number): IEntity_FindEntities_Result[] {
+        findEntities(withinPixelRange: number, onlyLivingEntities? : bool): IEntity_FindEntities_Result[] {
+            if(this.isDead())
+                return;
+            
             var entitiesWithinRange: IEntity_FindEntities_Result[] = [];
             var entitiesLen = this._gameBoard.entities.length;
             for (var i = 0; i < entitiesLen; i++) {
                 var entity = this._gameBoard.entities[i];
                 if (entity === this)
+                    continue;
+                if(onlyLivingEntities && entity.isDead())
                     continue;
 
                 var distance = Game.Utilities.distanceBetweenPoints(this.getWorldX(), this.getWorldY(), entity.getWorldX(), entity.getWorldY());
@@ -158,8 +163,9 @@ module Game {
             return entitiesWithinRange;
         }
 
-
         _shoot_lastShotFired: Date;
+        _health: number = 256;
+        _gunDamage: number = 16;
 
         shoot(options: IEntity_Shoot_Options) {
             var self = this;
@@ -208,7 +214,11 @@ module Game {
                 x: hitX,
                 y: hitY,
                 duration: distance / 250,
-                callback: function () {
+                callback: () => {
+                    if (options.entityShootingAt) {
+                        options.entityShootingAt.takeDamage(this._gunDamage);
+                    }
+                                        
                     line.hide();
                     bulletHit.KineticImage.show();
                     bulletHit.KineticImage.transitionTo({
@@ -224,12 +234,33 @@ module Game {
                 }
             });            
         }
+        
+        takeDamage(damageTaken : number) {
+            this._health -= damageTaken;
+            
+            if (this.isDead())
+            { 
+                this.entityKilled();
+            }
+        }
+
+        // Overridable: Called when this entity dies.
+        entityKilled() {
+            this._health = 0;
+            this._group.removeChildren(); // Remove the current rendering of the entity from the screen.
+            this.draw();
+        }
+                
+        isDead() {
+            return this._health <= 0;
+        }
     }
 
     export interface IEntity_Shoot_Options {
         targetX: number;
         targetY: number;
         timeBetweenShots?: number; // Max value is whatever the tick amount is.
+        entityShootingAt?: Entity;
     }
 
     export interface IEntityConfiguration {

@@ -66,7 +66,13 @@ module Game {
             this.stage.add(this.movableEntitiesLayer);     
             
             // This loop ensures that if the draw event isn't firing the game loop then this is at least trying to. 
-            this._gameLoopInterval = setInterval(() => { this.stage.draw() }, 1000);
+            this._gameLoopInterval = setInterval(() => 
+            {
+                for (var i = 0; i < this.mapZoneLayers.length; i++) {
+                    var layer = this.mapZoneLayers[i];
+                    layer.KineticLayer.draw();
+                }
+            }, 1000);
         }
         
         _lastTickTime: Date = new Date();
@@ -75,8 +81,8 @@ module Game {
                 self._lastTickTime = new Date();
             }
             if (new Date(self._lastTickTime.getTime() + 250) <= new Date()) {
-                console.log("ticking");
                 self._lastTickTime = new Date();
+                console.log("ticking");                
                 var entitiesLen = self.entities.length;
                 for (var i = 0; i < entitiesLen; i++) {
                     var entity = self.entities[i];
